@@ -1,9 +1,8 @@
 plugins {
-    // Pindahkan Kotlin Android ke atas untuk menghindari konflik ekstensi
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.google.services)
+    // alias(libs.plugins.google.services) // Dinonaktifkan sementara karena fokus UI
 }
 
 android {
@@ -39,8 +38,6 @@ android {
     buildFeatures {
         compose = true
     }
-    // Di Kotlin 2.0+, composeOptions { kotlinCompilerExtensionVersion } sudah dihapus 
-    // karena versinya sudah dikelola otomatis oleh plugin 'kotlin-compose'.
 }
 
 dependencies {
@@ -54,10 +51,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.firestore)
-    implementation(libs.firebase.analytics)
+    // Firebase (Dinonaktifkan sementara agar build sukses tanpa google-services.json)
+    // implementation(platform(libs.firebase.bom))
+    // implementation(libs.firebase.firestore)
+    // implementation(libs.firebase.analytics)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

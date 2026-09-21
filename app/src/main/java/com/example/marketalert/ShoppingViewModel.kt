@@ -1,50 +1,37 @@
 package com.example.marketalert
 
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class ShoppingViewModel : ViewModel() {
-    private val db = FirebaseFirestore.getInstance()
-    private val collection = db.collection("shopping_items")
-
-    private val _items = MutableStateFlow<List<ShoppingItem>>(emptyList())
+    private val _items = MutableStateFlow<List<ShoppingItem>>(
+        listOf(
+            ShoppingItem("1", "Warung Makmur", false),
+            ShoppingItem("2", "Toko Berkah Mart", false),
+            ShoppingItem("3", "Toko Sinar Jaya", false)
+        )
+    )
     val items: StateFlow<List<ShoppingItem>> = _items
-
-    init {
-        listenToItems()
-    }
-
-    private fun listenToItems() {
-        collection.orderBy("timestamp", Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) return@addSnapshotListener
-                if (snapshot != null) {
-                    val itemList = snapshot.documents.mapNotNull { doc ->
-                        doc.toObject(ShoppingItem::class.java)?.copy(id = doc.id)
-                    }
-                    _items.value = itemList
-                }
-            }
-    }
 
     fun addItem(title: String) {
         if (title.isBlank()) return
-        val item = hashMapOf(
-            "title" to title,
-            "isBought" to false,
-            "timestamp" to System.currentTimeMillis()
+        val newItem = ShoppingItem(
+            id = System.currentTimeMillis().toString(),
+            title = title,
+            isBought = false,
+            timestamp = System.currentTimeMillis()
         )
-        collection.add(item)
+        _items.value = _items.value + newItem
     }
 
     fun toggleBought(item: ShoppingItem) {
-        collection.document(item.id).update("isBought", !item.isBought)
+        _items.value = _items.value.map {
+            if (it.id == item.id) it.copy(isBought = !it.isBought) else it
+        }
     }
 
     fun deleteItem(item: ShoppingItem) {
-        collection.document(item.id).delete()
+        _items.value = _items.value.filter { it.id != item.id }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.marketalert.ui.templates
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -19,7 +20,7 @@ fun DashboardScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF191C24)) // Background luar gelap sesuai gambar
+            .background(Color(0xFFA2B4EC)) // Background luar gelap sesuai gambar
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -30,7 +31,7 @@ fun DashboardScreen() {
                 .wrapContentHeight(),
             shape = RoundedCornerShape(32.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFDCE2E7) // Warna abu-abu muda sesuai mockup gambar
+                containerColor = Color(0xFF6C9EC7) // Warna abu-abu muda sesuai mockup gambar
             )
         ) {
             Column(
@@ -64,7 +65,9 @@ fun DashboardScreen() {
                         colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2538))
                     ) {
                         Box(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { /* Action */ },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(

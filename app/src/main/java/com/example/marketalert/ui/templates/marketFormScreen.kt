@@ -67,7 +67,7 @@ fun MarketFormScreen(onBackClick: () -> Unit = {}) {
                     .height(54.dp),
                 shape = RoundedCornerShape(27.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
+                    containerColor = Color(0xFF6C9EC7),
                     contentColor = Color.White
                 )
             ) {
@@ -251,7 +251,7 @@ fun MarketFormScreen(onBackClick: () -> Unit = {}) {
                         }
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = Color.Black
+                            color = Color(0xFF6C9EC7)
                         ) {
                             Text(
                                 text = "${radius.toInt()}m",
@@ -268,8 +268,8 @@ fun MarketFormScreen(onBackClick: () -> Unit = {}) {
                         onValueChange = { radius = it },
                         valueRange = 50f..500f,
                         colors = SliderDefaults.colors(
-                            thumbColor = Color.Black,
-                            activeTrackColor = Color.Black,
+                            thumbColor = Color(0xFF6C9EC7),
+                            activeTrackColor = Color(0xFF6C9EC7),
                             inactiveTrackColor = Color(0xFFE0E0E0)
                         )
                     )
