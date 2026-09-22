@@ -53,52 +53,80 @@ fun DashboardScreen() {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Row Dua Tombol Tambah (+)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
-                    // Tombol Kiri (Gelap)
-                    Card(
-                        modifier = Modifier.size(width = 80.dp, height = 56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2538))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clickable { /* Action */ },
-                            contentAlignment = Alignment.Center
+                        // Tombol Kiri (Gelap)
+                        Card(
+                            modifier = Modifier.size(width = 80.dp, height = 56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2538))
                         ) {
-                            Text(
-                                text = "+",
-                                color = Color.White,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable { /* Action */ },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "+",
+                                    color = Color.White,
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        // Tombol Kanan (Terang)
+                        Card(
+                            modifier = Modifier.size(width = 80.dp, height = 56.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F4F8))
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "+",
+                                    color = Color(0xFF1E2538),
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         }
                     }
 
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    // Tombol Kanan (Terang)
+                    // disini ada tombol untuk melihat list toko
                     Card(
-                        modifier = Modifier.size(width = 80.dp, height = 56.dp),
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .padding(horizontal = 100.dp)
+                            .size(width = 100.dp, height = 56.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F4F8))
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF81BBF5))
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "+",
+                                text = "Market",
                                 color = Color(0xFF1E2538),
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                     }
+
                 }
 
                 Spacer(modifier = Modifier.height(28.dp))
