@@ -1,5 +1,6 @@
 package com.example.marketalert.ui.templates
 
+import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,7 +17,12 @@ import androidx.compose.ui.unit.sp
 import com.example.marketalert.ui.theme.MarketAlertTheme
 
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(
+    onNavigateToMarketList: () -> Unit = {},
+    onNavigateToMarketForm: () -> Unit = {},
+    onNavigateToAddShopping: () -> Unit = {},
+    onNavigateToDetail: (String) -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +77,7 @@ fun DashboardScreen() {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .clickable { /* Action */ },
+                                    .clickable { onNavigateToMarketForm() },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -92,7 +98,9 @@ fun DashboardScreen() {
                             colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F4F8))
                         ) {
                             Box(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .clickable{onNavigateToAddShopping()}
+                                    .fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -110,8 +118,9 @@ fun DashboardScreen() {
                         modifier = Modifier
                             .padding(top = 10.dp)
                             .padding(horizontal = 100.dp)
-                            .size(width = 100.dp, height = 56.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .size(width = 100.dp, height = 56.dp)
+                            .clickable { onNavigateToMarketList() },
+                    shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = Color(0xFF81BBF5))
                     ) {
                         Box(
@@ -148,9 +157,9 @@ fun DashboardScreen() {
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ShoppingItemCard(title = "Warung Makmur", date = "Ditulis 10 Jan 2025")
-                    ShoppingItemCard(title = "Toko Berkah Mart", date = "Ditulis 08 Jan 2025")
-                    ShoppingItemCard(title = "Toko Sinar Jaya", date = "Ditulis 12 Jan 2025")
+                    ShoppingItemCard(title = "Warung Makmur", date = "Ditulis 10 Jan 2025", onClick = { onNavigateToDetail("Warung Makmur") })
+                    ShoppingItemCard(title = "Toko Berkah Mart", date = "Ditulis 08 Jan 2025", onClick = { onNavigateToDetail("Toko Berkah Mart") })
+                    ShoppingItemCard(title = "Toko Sinar Jaya", date = "Ditulis 12 Jan 2025", onClick = { onNavigateToDetail("Toko Sinar Jaya") })
                 }
             }
         }
@@ -158,9 +167,11 @@ fun DashboardScreen() {
 }
 
 @Composable
-fun ShoppingItemCard(title: String, date: String) {
+fun ShoppingItemCard(title: String, date: String, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .clickable { onClick() }
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFF4F7FA) // Warna kartu item putih bersih kebiruan sesuai gambar
@@ -191,6 +202,7 @@ fun ShoppingItemCard(title: String, date: String) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
