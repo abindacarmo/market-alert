@@ -4,8 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.rememberNavController
 import com.example.marketalert.ui.templates.DashboardScreen
+import com.example.marketalert.ui.navigation.Screen
+import com.example.marketalert.ui.navigation.NavGraph
 import com.example.marketalert.ui.theme.MarketAlertTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,8 +17,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MarketAlertTheme {
-                // Menampilkan DashboardScreen yang sudah kita desain
-                DashboardScreen()
+                val navController = rememberNavController()
+                NavGraph(navController = navController)
             }
         }
     }
