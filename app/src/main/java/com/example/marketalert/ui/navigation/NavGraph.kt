@@ -29,8 +29,8 @@ fun NavGraph(
                 onNavigateToMarketList = { navController.navigate(Screen.MarketList.route) },
                 onNavigateToMarketForm = { navController.navigate(Screen.MarketForm.route) },
                 onNavigateToAddShopping = { navController.navigate(Screen.AddShopping.route) },
-                onNavigateToDetail = { storeName: String ->
-                    navController.navigate(Screen.DetailList.createRoute(storeName))
+                onNavigateToDetail = { storeId: Int ->
+                    navController.navigate(Screen.DetailList.createRoute(storeId))
                 }
             )
         }
@@ -41,8 +41,8 @@ fun NavGraph(
                 viewModel = viewModel,
                 onBackClick = { navController.popBackStack() },
                 onAddStoreClick = { navController.navigate(Screen.MarketForm.route) },
-                onStoreClick = { storeName ->
-                    navController.navigate(Screen.DetailList.createRoute(storeName))
+                onStoreClick = { storeId: Int ->
+                    navController.navigate(Screen.DetailList.createRoute(storeId))
                 }
             )
         }
@@ -62,14 +62,15 @@ fun NavGraph(
             )
         }
 
-        // 5. Rute Detail List (Menerima parameter nama toko)
+        // 5. Rute Detail List (Menerima parameter storeId: Int)
         composable(
             route = Screen.DetailList.route,
-            arguments = listOf(navArgument("storeName") { type = NavType.StringType })
+            arguments = listOf(navArgument("storeId") { type = NavType.IntType })
         ) { backStackEntry ->
-            val storeName = backStackEntry.arguments?.getString("storeName") ?: "Store"
+            val storeId = backStackEntry.arguments?.getInt("storeId") ?: 0
             DetailItemScreen(
-                storeName = storeName,
+                viewModel = viewModel,
+                storeId = storeId,
                 onBackClick = { navController.popBackStack() }
             )
         }

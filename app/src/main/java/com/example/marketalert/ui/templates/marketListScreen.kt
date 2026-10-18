@@ -27,7 +27,7 @@ fun MarketListScreen(
     viewModel: ShoppingViewModel,
     onBackClick: () -> Unit = {},
     onAddStoreClick: () -> Unit = {},
-    onStoreClick: (String) -> Unit = {}
+    onStoreClick: (Int) -> Unit = {}
 ) {
     // Data toko langsung dari database Room (otomatis update jika data berubah)
     val stores by viewModel.stores.collectAsState()
@@ -98,7 +98,7 @@ fun MarketListScreen(
                     MarketStoreCard(
                         store = store,
                         viewModel = viewModel,
-                        onClick = { onStoreClick(store.name) }
+                        onClick = { onStoreClick(store.id) }
                     )
                 }
             }

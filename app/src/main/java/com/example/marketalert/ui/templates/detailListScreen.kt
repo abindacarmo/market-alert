@@ -1,6 +1,7 @@
 package com.example.marketalert.ui.templates
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -22,28 +23,24 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.marketalert.ui.theme.MarketAlertTheme
+import com.example.marketalert.ShoppingViewModel
+import com.example.marketalert.data.ShoppingItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailItemScreen(
-    itemId: String = "001",
-    storeName: String = "Warung Makmur",
+    viewModel: ShoppingViewModel,
+    storeId: Int,
     onBackClick: () -> Unit = {}
 ) {
-    // Data dummy untuk keperluan desain UI
-    val items = remember {
-        mutableStateListOf(
-            "Organic Almond Milk" to true,
-            "Fresh Eggs (12 pack)" to false,
-            "Whole Wheat Bread" to false,
-            "Bananas" to true,
-            "Chicken Breast" to false
-        )
-    }
+    // Ambil nama toko dari database berdasarkan ID
+    val store by viewModel.getStoreById(storeId).collectAsState(initial = null)
+    val storeName = store?.name ?: "Store"
+
+    // Ambil item belanja untuk toko ini dari database
+    val items by viewModel.itemByStore(storeId).collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
@@ -59,7 +56,7 @@ fun DetailItemScreen(
                             )
                         )
                         Text(
-                            text = "Shopping List Detail #$itemId",
+                            text = "Shopping List #$storeId",
                             style = MaterialTheme.typography.labelSmall.copy(
                                 color = Color.Gray,
                                 letterSpacing = 0.5.sp
@@ -136,8 +133,8 @@ fun DetailItemScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Progress Summary Card
-            val boughtCount = items.count { it.second }
+            // Progress Summary Card — dihitung dari data asli
+            val boughtCount = items.count { it.isBought }
             val progress = if (items.isNotEmpty()) boughtCount.toFloat() / items.size else 0f
 
             Card(
@@ -184,18 +181,35 @@ fun DetailItemScreen(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            // Daftar Item Belanja
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(bottom = 16.dp)
-            ) {
-                itemsIndexed(items) { index, item ->
-                    ShoppingDetailRow(
-                        id = (index + 1).toString().padStart(2, '0'),
-                        name = item.first,
-                        isBought = item.second
+            // Daftar Item Belanja dari database
+            if (items.isEmpty()) {
+                // Empty state jika belum ada item
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Belum ada item.\nTekan + di bawah untuk menambah.",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = Color.Gray
+                        ),
+                        textAlign = TextAlign.Center
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+                        ShoppingDetailRow(
+                            id = (index + 1).toString().padStart(2, '0'),
+                            name = item.name,
+                            isBought = item.isBought,
+                            onToggle = { viewModel.toggleBought(item) }  // ← checkbox bisa diklik!
+                        )
+                    }
                 }
             }
         }
@@ -231,10 +245,13 @@ fun StatusButton(
 fun ShoppingDetailRow(
     id: String,
     name: String,
-    isBought: Boolean
+    isBought: Boolean,
+    onToggle: () -> Unit            // ← callback baru: dipanggil saat checkbox diklik
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onToggle() },   // ← seluruh baris bisa diklik untuk toggle
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(
@@ -296,13 +313,5 @@ fun ShoppingDetailRow(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DetailItemScreenPreview() {
-    MarketAlertTheme {
-        DetailItemScreen(storeName = "Warung Makmur")
     }
 }

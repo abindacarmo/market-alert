@@ -6,9 +6,9 @@ sealed class Screen(val route: String) {
     object MarketForm : Screen("market_form")
     object AddShopping : Screen("add_shopping")
 
-    object DetailList : Screen("detail_list/{storeName}") {
-        fun createRoute(storeName: String): String {
-            return "detail_list/$storeName"
+    object DetailList : Screen("detail_list/{storeId}") {
+        fun createRoute(storeId: Int): String {
+            return "detail_list/$storeId"
         }
     }
 }

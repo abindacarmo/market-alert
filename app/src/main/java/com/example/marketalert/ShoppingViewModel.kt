@@ -38,6 +38,8 @@ class ShoppingViewModel(
 
     fun deleteStore(store: Store) = viewModelScope.launch { storeDao.delete(store) }
 
+    fun getStoreById(storeId: Int) = storeDao.getById(storeId)
+
     fun itemByStore(storeId: Int) = itemDao.getByStore(storeId)
 
     fun countRemaining(storeId: Int) = itemDao.countRemaining(storeId)

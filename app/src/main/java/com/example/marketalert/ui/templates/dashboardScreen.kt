@@ -26,7 +26,7 @@ fun DashboardScreen(
     onNavigateToMarketList: () -> Unit = {},
     onNavigateToMarketForm: () -> Unit = {},
     onNavigateToAddShopping: () -> Unit = {},
-    onNavigateToDetail: (String) -> Unit = {}
+    onNavigateToDetail: (Int) -> Unit = {}
 ) {
     // Daftar toko dari database Room (otomatis update)
     val stores by viewModel.stores.collectAsState()
@@ -181,7 +181,7 @@ fun DashboardScreen(
                             ShoppingItemCard(
                                 title = store.name,
                                 date = "Ditulis ${dateFormat.format(Date(store.createdAt))}",
-                                onClick = { onNavigateToDetail(store.name) }
+                                onClick = { onNavigateToDetail(store.id) }
                             )
                         }
                     }
