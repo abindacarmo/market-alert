@@ -19,16 +19,16 @@ class MainActivity : ComponentActivity() {
             MarketAlertTheme {
                 val navController = rememberNavController()
 
-                // 1. Buat (atau ambil) instance database singleton
+                // 1. Create (or get) the singleton database instance
                 val db = MarketAlertDatabase.getInstance(this)
 
-                // 2. Buat ViewModel dengan factory (butuh DAO dari db)
+                // 2. Create the ViewModel with a factory (needs the DAOs from the db)
                 val viewModel:
                         ShoppingViewModel = viewModel(
                     factory = ShoppingViewModel.factory(db.storeDao(), db.shoppingItemDao())
                 )
 
-                // 3. Pass ke NavGraph
+                // 3. Pass it to NavGraph
                 NavGraph(navController = navController, viewModel = viewModel)
             }
         }

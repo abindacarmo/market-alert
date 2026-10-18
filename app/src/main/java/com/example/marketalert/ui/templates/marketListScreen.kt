@@ -29,7 +29,7 @@ fun MarketListScreen(
     onAddStoreClick: () -> Unit = {},
     onStoreClick: (Int) -> Unit = {}
 ) {
-    // Data toko langsung dari database Room (otomatis update jika data berubah)
+    // Store data straight from the Room database (auto-updates when data changes)
     val stores by viewModel.stores.collectAsState()
 
     Scaffold(
@@ -88,7 +88,7 @@ fun MarketListScreen(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // List Toko dari database
+            // Store list from the database
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -112,7 +112,7 @@ fun MarketStoreCard(
     viewModel: ShoppingViewModel,
     onClick: () -> Unit
 ) {
-    // Hitung sisa item yang belum dibeli untuk toko ini
+    // Count the remaining unbought items for this store
     val remaining by viewModel.countRemaining(store.id).collectAsState(initial = 0)
 
     Card(
@@ -130,7 +130,7 @@ fun MarketStoreCard(
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icon Representasi Toko
+            // Store placeholder icon
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = RoundedCornerShape(12.dp),

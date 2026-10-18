@@ -22,7 +22,7 @@ fun NavGraph(
         navController = navController,
         startDestination = Screen.Dashboard.route
     ) {
-        // 1. Rute Dashboard (Halaman Utama)
+        // 1. Dashboard route (home screen)
         composable(route = Screen.Dashboard.route) {
             DashboardScreen(
                 viewModel = viewModel,
@@ -35,7 +35,7 @@ fun NavGraph(
             )
         }
 
-        // 2. Rute Daftar Toko
+        // 2. Store list route
         composable(route = Screen.MarketList.route) {
             MarketListScreen(
                 viewModel = viewModel,
@@ -47,7 +47,7 @@ fun NavGraph(
             )
         }
 
-        // 3. Rute Form Tambah Toko
+        // 3. Add store form route
         composable(route = Screen.MarketForm.route) {
             MarketFormScreen(
                 viewModel = viewModel,
@@ -55,7 +55,7 @@ fun NavGraph(
             )
         }
 
-        // 4. Rute Form Tambah Item Belanja
+        // 4. Add shopping item form route
         composable(route = Screen.AddShopping.route) {
             FormAddShoppingScreen(
                 viewModel = viewModel,
@@ -63,7 +63,7 @@ fun NavGraph(
             )
         }
 
-        // 5. Rute Detail List (Menerima parameter storeId: Int)
+        // 5. Detail list route (takes storeId: Int as an argument)
         composable(
             route = Screen.DetailList.route,
             arguments = listOf(navArgument("storeId") { type = NavType.IntType })

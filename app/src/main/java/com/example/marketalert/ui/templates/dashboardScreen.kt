@@ -28,26 +28,26 @@ fun DashboardScreen(
     onNavigateToAddShopping: () -> Unit = {},
     onNavigateToDetail: (Int) -> Unit = {}
 ) {
-    // Daftar toko dari database Room (otomatis update)
+    // Store list from the Room database (auto-updates)
     val stores by viewModel.stores.collectAsState()
-    // Format tanggal: "10 Jan 2025"
+    // Date format: "10 Jan 2025"
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFA2B4EC)) // Background luar gelap sesuai gambar
+            .background(Color(0xFFA2B4EC)) // Outer background color from the mockup
             .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Kartu Utama (market-alert-card)
+        // Main card (market-alert-card)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
             shape = RoundedCornerShape(32.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF6C9EC7) // Warna abu-abu muda sesuai mockup gambar
+                containerColor = Color(0xFF6C9EC7) // Light blue card color from the mockup
             )
         ) {
             Column(
@@ -56,7 +56,7 @@ fun DashboardScreen(
                     .padding(vertical = 32.dp, horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Judul Atas
+                // Top title
                 Text(
                     text = "Market Alert",
                     style = MaterialTheme.typography.headlineMedium.copy(
@@ -68,7 +68,7 @@ fun DashboardScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Row Dua Tombol Tambah (+)
+                // Row of two add (+) buttons
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -78,7 +78,7 @@ fun DashboardScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Tombol Kiri (Gelap)
+                        // Left button (dark)
                         Card(
                             modifier = Modifier.size(width = 80.dp, height = 56.dp),
                             shape = RoundedCornerShape(16.dp),
@@ -101,7 +101,7 @@ fun DashboardScreen(
 
                         Spacer(modifier = Modifier.width(16.dp))
 
-                        // Tombol Kanan (Terang)
+                        // Right button (light)
                         Card(
                             modifier = Modifier.size(width = 80.dp, height = 56.dp),
                             shape = RoundedCornerShape(16.dp),
@@ -123,7 +123,7 @@ fun DashboardScreen(
                         }
                     }
 
-                    // disini ada tombol untuk melihat list toko
+                    // Button to open the store list
                     Card(
                         modifier = Modifier
                             .padding(top = 10.dp)
@@ -150,7 +150,7 @@ fun DashboardScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                // Judul List Shopping
+                // Shopping list title
                 Text(
                     text = "List Shopping",
                     style = MaterialTheme.typography.titleLarge.copy(
@@ -162,11 +162,11 @@ fun DashboardScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // List Shopping Items dari database Room
+                // Shopping list items from the Room database
                 if (stores.isEmpty()) {
-                    // Tampilan jika belum ada toko sama sekali
+                    // Shown when there are no stores yet
                     Text(
-                        text = "Belum ada toko. Tekan + untuk menambah.",
+                        text = "No stores yet. Press + to add one.",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = Color(0xFF1E2538),
                             fontSize = 14.sp
@@ -180,7 +180,7 @@ fun DashboardScreen(
                         items(stores, key = { it.id }) { store ->
                             ShoppingItemCard(
                                 title = store.name,
-                                date = "Ditulis ${dateFormat.format(Date(store.createdAt))}",
+                                date = "Created ${dateFormat.format(Date(store.createdAt))}",
                                 onClick = { onNavigateToDetail(store.id) }
                             )
                         }
@@ -199,7 +199,7 @@ fun ShoppingItemCard(title: String, date: String, onClick: () -> Unit) {
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF4F7FA) // Warna kartu item putih bersih kebiruan sesuai gambar
+            containerColor = Color(0xFFF4F7FA) // Clean bluish-white item card color from the mockup
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {

@@ -35,11 +35,11 @@ fun DetailItemScreen(
     storeId: Int,
     onBackClick: () -> Unit = {}
 ) {
-    // Ambil nama toko dari database berdasarkan ID
+    // Load the store name from the database by ID
     val store by viewModel.getStoreById(storeId).collectAsState(initial = null)
     val storeName = store?.name ?: "Store"
 
-    // Ambil item belanja untuk toko ini dari database
+    // Load shopping items for this store from the database
     val items by viewModel.itemByStore(storeId).collectAsState(initial = emptyList())
 
     Scaffold(
@@ -74,7 +74,7 @@ fun DetailItemScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Menu opsi */ }) {
+                    IconButton(onClick = { /* Options menu */ }) {
                         Icon(Icons.Default.MoreVert, contentDescription = null, tint = Color.Black)
                     }
                 },
@@ -84,7 +84,7 @@ fun DetailItemScreen(
             )
         },
         bottomBar = {
-            // Bottom Bar dengan 3 tombol status (Hitam-Putih Minimalis)
+            // Bottom bar with 3 status buttons (black & white minimal)
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,21 +100,21 @@ fun DetailItemScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     StatusButton(
-                        label = "Belum",
+                        label = "Todo",
                         icon = Icons.AutoMirrored.Filled.List,
                         containerColor = Color.White,
                         contentColor = Color.Black,
                         modifier = Modifier.weight(1f)
                     )
                     StatusButton(
-                        label = "Tersisa",
+                        label = "Remaining",
                         icon = Icons.Default.Info,
                         containerColor = Color(0xFFF0F0F0),
                         contentColor = Color.Black,
                         modifier = Modifier.weight(1f)
                     )
                     StatusButton(
-                        label = "Selesai",
+                        label = "Done",
                         icon = Icons.Default.CheckCircle,
                         containerColor = Color.Black,
                         contentColor = Color.White,
@@ -133,7 +133,7 @@ fun DetailItemScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Progress Summary Card — dihitung dari data asli
+            // Progress summary card — computed from real data
             val boughtCount = items.count { it.isBought }
             val progress = if (items.isNotEmpty()) boughtCount.toFloat() / items.size else 0f
 
@@ -154,7 +154,7 @@ fun DetailItemScreen(
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                         )
                         Text(
-                            text = "$boughtCount dari ${items.size} item sudah terbeli",
+                            text = "$boughtCount of ${items.size} items bought",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.DarkGray
                         )
@@ -181,15 +181,15 @@ fun DetailItemScreen(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            // Daftar Item Belanja dari database
+            // Shopping item list from the database
             if (items.isEmpty()) {
-                // Empty state jika belum ada item
+                // Empty state when there are no items yet
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Belum ada item.\nTekan + di bawah untuk menambah.",
+                        text = "No items yet.\nPress + below to add one.",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = Color.Gray
                         ),
@@ -207,7 +207,7 @@ fun DetailItemScreen(
                             id = (index + 1).toString().padStart(2, '0'),
                             name = item.name,
                             isBought = item.isBought,
-                            onToggle = { viewModel.toggleBought(item) }  // ← checkbox bisa diklik!
+                            onToggle = { viewModel.toggleBought(item) }  // ← checkbox is clickable!
                         )
                     }
                 }
@@ -246,12 +246,12 @@ fun ShoppingDetailRow(
     id: String,
     name: String,
     isBought: Boolean,
-    onToggle: () -> Unit            // ← callback baru: dipanggil saat checkbox diklik
+    onToggle: () -> Unit            // ← new callback: fired when the checkbox is tapped
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onToggle() },   // ← seluruh baris bisa diklik untuk toggle
+            .clickable { onToggle() },   // ← the whole row is tappable to toggle
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(
@@ -266,7 +266,7 @@ fun ShoppingDetailRow(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Label ID Item dalam lingkaran kecil
+            // Item ID label in a small circle
             Surface(
                 modifier = Modifier.size(28.dp),
                 shape = CircleShape,
@@ -296,7 +296,7 @@ fun ShoppingDetailRow(
                 )
             )
 
-            // Checkbox Minimalis Kustom
+            // Minimal custom checkbox
             Surface(
                 modifier = Modifier.size(22.dp),
                 shape = RoundedCornerShape(4.dp),
