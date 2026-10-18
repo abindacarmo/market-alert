@@ -23,12 +23,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.marketalert.ui.theme.MarketAlertTheme
+import com.example.marketalert.ShoppingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MarketFormScreen(onBackClick: () -> Unit = {}) {
-    var storeName by remember { mutableStateOf("Whole Foods Market") }
+fun MarketFormScreen(
+    viewModel: ShoppingViewModel,
+    onBackClick: () -> Unit = {}
+) {
+    var storeName by remember { mutableStateOf("") }
     var radius by remember { mutableFloatStateOf(150f) }
 
     Scaffold(
@@ -60,7 +63,12 @@ fun MarketFormScreen(onBackClick: () -> Unit = {}) {
         },
         bottomBar = {
             Button(
-                onClick = { /* Action */ },
+                onClick = {
+                    if (storeName.isNotBlank()) {
+                        viewModel.addStore(storeName.trim(), 0.0, 0.0, radius)
+                        onBackClick()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -297,10 +305,3 @@ fun MarketFormScreen(onBackClick: () -> Unit = {}) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MarketFormScreenPreview() {
-    MarketAlertTheme {
-        MarketFormScreen()
-    }
-}

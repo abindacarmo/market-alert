@@ -11,31 +11,26 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.marketalert.ui.theme.MarketAlertTheme
+import com.example.marketalert.ShoppingViewModel
+import com.example.marketalert.data.Store
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MarketListScreen(
+    viewModel: ShoppingViewModel,
     onBackClick: () -> Unit = {},
     onAddStoreClick: () -> Unit = {},
-    onStoreClick: (String) -> Unit = {}
+    onStoreClick: (Int) -> Unit = {}
 ) {
-    // Data dummy untuk daftar toko yang sudah terdaftar
-    val stores = listOf(
-        MarketStore("Warung Makmur", 3),
-        MarketStore("Toko Berkah Mart", 0),
-        MarketStore("Toko Sinar Jaya", 5),
-        MarketStore("Indomaret Sejahtera", 2),
-        MarketStore("Alfamart Utama", 1)
-    )
+    // Data toko langsung dari database Room (otomatis update jika data berubah)
+    val stores by viewModel.stores.collectAsState()
 
     Scaffold(
         topBar = {
@@ -82,7 +77,7 @@ fun MarketListScreen(
                 .padding(horizontal = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Text(
                 text = "REGISTERED MARKETS",
                 style = MaterialTheme.typography.labelMedium.copy(
@@ -93,16 +88,17 @@ fun MarketListScreen(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            // List Toko
+            // List Toko dari database
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(bottom = 80.dp)
             ) {
-                items(stores) { store ->
+                items(stores, key = { it.id }) { store ->
                     MarketStoreCard(
                         store = store,
-                        onClick = { onStoreClick(store.name) }
+                        viewModel = viewModel,
+                        onClick = { onStoreClick(store.id) }
                     )
                 }
             }
@@ -112,9 +108,13 @@ fun MarketListScreen(
 
 @Composable
 fun MarketStoreCard(
-    store: MarketStore,
+    store: Store,
+    viewModel: ShoppingViewModel,
     onClick: () -> Unit
 ) {
+    // Hitung sisa item yang belum dibeli untuk toko ini
+    val remaining by viewModel.countRemaining(store.id).collectAsState(initial = 0)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,7 +139,7 @@ fun MarketStoreCard(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
-                        imageVector = Icons.Default.Home, // Menggunakan Home sebagai pengganti Store
+                        imageVector = Icons.Default.Home,
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier.size(24.dp)
@@ -158,10 +158,10 @@ fun MarketStoreCard(
                     )
                 )
                 Text(
-                    text = if (store.itemCount > 0) "${store.itemCount} items left" else "All items bought",
+                    text = if (remaining > 0) "$remaining items left" else "All items bought",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = if (store.itemCount > 0) Color.Black else Color.Gray,
-                        fontWeight = if (store.itemCount > 0) FontWeight.Medium else FontWeight.Normal
+                        color = if (remaining > 0) Color.Black else Color.Gray,
+                        fontWeight = if (remaining > 0) FontWeight.Medium else FontWeight.Normal
                     )
                 )
             }
@@ -172,18 +172,5 @@ fun MarketStoreCard(
                 tint = Color.LightGray
             )
         }
-    }
-}
-
-data class MarketStore(
-    val name: String,
-    val itemCount: Int
-)
-
-@Preview(showBackground = true)
-@Composable
-fun MarketListScreenPreview() {
-    MarketAlertTheme {
-        MarketListScreen()
     }
 }

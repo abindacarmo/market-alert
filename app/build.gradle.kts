@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
     // alias(libs.plugins.google.services) // Dinonaktifkan sementara karena fokus UI
 }
 
@@ -52,6 +53,9 @@ dependencies {
     implementation(libs.androidx.compose.material3)
 
     implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // Firebase (Dinonaktifkan sementara agar build sukses tanpa google-services.json)
     // implementation(platform(libs.firebase.bom))
