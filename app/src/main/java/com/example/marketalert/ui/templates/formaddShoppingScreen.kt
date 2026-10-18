@@ -29,10 +29,10 @@ fun FormAddShoppingScreen(
 ) {
     var itemName by remember { mutableStateOf("") }
 
-    // Daftar item SEMENTARA (belum masuk database, hanya di memori layar ini)
+    // Temporary item list (not in the database yet, only in this screen's memory)
     val pendingItems = remember { mutableStateListOf<String>() }
 
-    // Daftar toko dari database untuk dropdown
+    // Store list from the database for the dropdown
     val stores by viewModel.stores.collectAsState()
     var selectedStoreId by remember { mutableStateOf<Int?>(null) }
     var expanded by remember { mutableStateOf(false) }
@@ -101,13 +101,13 @@ fun FormAddShoppingScreen(
             }
 
             // =============================================
-            // 2. TOMBOL "ADD ITEM" — masukkan ke daftar sementara
+            // 2. "ADD ITEM" BUTTON — push to the temporary list
             // =============================================
             Button(
                 onClick = {
                     if (itemName.isNotBlank()) {
-                        pendingItems.add(itemName.trim())  // ← masuk daftar sementara
-                        itemName = ""                       // ← kosongkan field
+                        pendingItems.add(itemName.trim())  // ← push to the temporary list
+                        itemName = ""                       // ← clear the field
                     }
                 },
                 modifier = Modifier
@@ -138,7 +138,7 @@ fun FormAddShoppingScreen(
             }
 
             // =============================================
-            // 3. DAFTAR ITEM SEMENTARA (preview sebelum simpan)
+            // 3. TEMPORARY ITEM LIST (preview before saving)
             // =============================================
             if (pendingItems.isNotEmpty()) {
                 Card(
@@ -172,7 +172,7 @@ fun FormAddShoppingScreen(
                                             color = Color.Black
                                         )
                                     )
-                                    // Tombol hapus item dari daftar sementara
+                                    // Button to remove an item from the temporary list
                                     IconButton(
                                         onClick = { pendingItems.removeAt(index) },
                                         modifier = Modifier.size(24.dp)
@@ -257,17 +257,17 @@ fun FormAddShoppingScreen(
             }
 
             // =============================================
-            // 5. TOMBOL "SAVE ALL" — simpan semua ke database
+            // 5. "SAVE ALL" BUTTON — write everything to the database
             // =============================================
             Button(
                 onClick = {
                     if (pendingItems.isNotEmpty() && selectedStoreId != null) {
-                        // Simpan SEMUA item ke Room
+                        // Save every item to Room
                         pendingItems.forEach { item ->
                             viewModel.addItem(item, selectedStoreId!!)
                         }
-                        pendingItems.clear()      // ← kosongkan daftar sementara
-                        selectedStoreId = null    // ← reset pilihan toko
+                        pendingItems.clear()      // ← clear the temporary list
+                        selectedStoreId = null    // ← reset the store selection
                     }
                 },
                 modifier = Modifier
@@ -276,7 +276,7 @@ fun FormAddShoppingScreen(
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (pendingItems.isNotEmpty() && selectedStoreId != null)
-                        Color.Black else Color.Gray,   // ← abu-abu jika belum lengkap
+                        Color.Black else Color.Gray,   // ← gray until everything is ready
                     contentColor = Color.White
                 )
             ) {

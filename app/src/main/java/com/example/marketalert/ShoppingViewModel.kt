@@ -21,9 +21,9 @@ class ShoppingViewModel(
     init {
         viewModelScope.launch {
             if (storeDao.count() == 0) {
-                storeDao.insert(Store(name = "Warung Makmur", latitude = 0.0, longitude = 0.0, radius = 0f))
-                storeDao.insert(Store(name = "Toko Sinar Jaya", latitude = 0.0, longitude = 0.0, radius = 0f))
-                storeDao.insert(Store(name = "Indomaret Sejahtera", latitude = 0.0, longitude = 0.0, radius = 0f))
+                storeDao.insert(Store(name = "Makmur Store", latitude = 0.0, longitude = 0.0, radius = 0f))
+                storeDao.insert(Store(name = "Sinar Jaya Store", latitude = 0.0, longitude = 0.0, radius = 0f))
+                storeDao.insert(Store(name = "Sejahtera Mart", latitude = 0.0, longitude = 0.0, radius = 0f))
             }
         }
 
