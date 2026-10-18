@@ -1,28 +1,38 @@
 package com.example.marketalert.ui.templates
 
-import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.marketalert.ui.theme.MarketAlertTheme
+import com.example.marketalert.ShoppingViewModel
+import com.example.marketalert.data.Store
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun DashboardScreen(
+    viewModel: ShoppingViewModel,
     onNavigateToMarketList: () -> Unit = {},
     onNavigateToMarketForm: () -> Unit = {},
     onNavigateToAddShopping: () -> Unit = {},
     onNavigateToDetail: (String) -> Unit = {}
 ) {
+    // Daftar toko dari database Room (otomatis update)
+    val stores by viewModel.stores.collectAsState()
+    // Format tanggal: "10 Jan 2025"
+    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -152,14 +162,29 @@ fun DashboardScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // List Shopping Items sesuai mockup gambar
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    ShoppingItemCard(title = "Warung Makmur", date = "Ditulis 10 Jan 2025", onClick = { onNavigateToDetail("Warung Makmur") })
-                    ShoppingItemCard(title = "Toko Berkah Mart", date = "Ditulis 08 Jan 2025", onClick = { onNavigateToDetail("Toko Berkah Mart") })
-                    ShoppingItemCard(title = "Toko Sinar Jaya", date = "Ditulis 12 Jan 2025", onClick = { onNavigateToDetail("Toko Sinar Jaya") })
+                // List Shopping Items dari database Room
+                if (stores.isEmpty()) {
+                    // Tampilan jika belum ada toko sama sekali
+                    Text(
+                        text = "Belum ada toko. Tekan + untuk menambah.",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = Color(0xFF1E2538),
+                            fontSize = 14.sp
+                        )
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(stores, key = { it.id }) { store ->
+                            ShoppingItemCard(
+                                title = store.name,
+                                date = "Ditulis ${dateFormat.format(Date(store.createdAt))}",
+                                onClick = { onNavigateToDetail(store.name) }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -203,11 +228,3 @@ fun ShoppingItemCard(title: String, date: String, onClick: () -> Unit) {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun DashboardScreenPreview() {
-    MarketAlertTheme {
-        DashboardScreen()
-    }
-}

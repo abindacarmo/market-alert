@@ -25,6 +25,7 @@ fun NavGraph(
         // 1. Rute Dashboard (Halaman Utama)
         composable(route = Screen.Dashboard.route) {
             DashboardScreen(
+                viewModel = viewModel,
                 onNavigateToMarketList = { navController.navigate(Screen.MarketList.route) },
                 onNavigateToMarketForm = { navController.navigate(Screen.MarketForm.route) },
                 onNavigateToAddShopping = { navController.navigate(Screen.AddShopping.route) },
