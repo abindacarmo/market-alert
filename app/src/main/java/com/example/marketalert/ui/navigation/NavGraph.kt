@@ -48,6 +48,7 @@ fun NavGraph(
         // 3. Rute Form Tambah Toko
         composable(route = Screen.MarketForm.route) {
             MarketFormScreen(
+                viewModel = viewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
