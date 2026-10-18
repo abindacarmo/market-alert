@@ -58,6 +58,7 @@ fun NavGraph(
         // 4. Rute Form Tambah Item Belanja
         composable(route = Screen.AddShopping.route) {
             FormAddShoppingScreen(
+                viewModel = viewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }

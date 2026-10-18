@@ -5,36 +5,47 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.marketalert.ui.theme.MarketAlertTheme
+import com.example.marketalert.ShoppingViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormAddShoppingScreen(onBackClick: () -> Unit = {}) {
+fun FormAddShoppingScreen(
+    viewModel: ShoppingViewModel,
+    onBackClick: () -> Unit = {}
+) {
     var itemName by remember { mutableStateOf("") }
-    var storeName by remember { mutableStateOf("") }
+
+    // Daftar toko dari database untuk dropdown
+    val stores by viewModel.stores.collectAsState()
+    // Toko yang sedang dipilih user (null = belum dipilih)
+    var selectedStoreId by remember { mutableStateOf<Int?>(null) }
+    // Status dropdown terbuka/tidak
+    var expanded by remember { mutableStateOf(false) }
+    // Nama toko yang tampil di field dropdown
+    val selectedStoreName = stores.find { it.id == selectedStoreId }?.name ?: ""
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
-                        "Add Item", 
+                        "Add Item",
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                    ) 
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack, 
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = Color.Black
                         )
@@ -82,9 +93,80 @@ fun FormAddShoppingScreen(onBackClick: () -> Unit = {}) {
                 )
             }
 
-            // 2. Tombol Add tepat di bawah Item Name
+            // 2. Store Dropdown (pengganti teks bebas)
+            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "Store *",
+                    style = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                )
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it }
+                ) {
+                    OutlinedTextField(
+                        value = selectedStoreName,
+                        onValueChange = {},   // ← tidak bisa diketik manual, hanya pilih dari dropdown
+                        readOnly = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),   // ← "menempel" dropdown ke text field ini
+                        placeholder = { Text("Select a store", color = Color.Gray) },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Dropdown",
+                                tint = Color.Black
+                            )
+                        },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color.Black,
+                            unfocusedBorderColor = Color.Black,
+                            cursorColor = Color.Black,
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
+                        ),
+                        singleLine = true
+                    )
+
+                    // Daftar pilihan toko (muncul saat dropdown diklik)
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        if (stores.isEmpty()) {
+                            // Jika belum ada toko terdaftar
+                            DropdownMenuItem(
+                                text = { Text("No stores available", color = Color.Gray) },
+                                onClick = { expanded = false }
+                            )
+                        } else {
+                            stores.forEach { store ->
+                                DropdownMenuItem(
+                                    text = { Text(store.name) },
+                                    onClick = {
+                                        selectedStoreId = store.id   // ← simpan ID toko terpilih
+                                        expanded = false              // ← tutup dropdown
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 3. Tombol Add — simpan item ke Room
             Button(
-                onClick = { /* UI Statis Saja */ },
+                onClick = {
+                    if (itemName.isNotBlank() && selectedStoreId != null) {
+                        viewModel.addItem(itemName.trim(), selectedStoreId!!)
+                        itemName = ""           // ← kosongkan field untuk input berikutnya
+                        selectedStoreId = null  // ← reset pilihan toko
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -111,40 +193,6 @@ fun FormAddShoppingScreen(onBackClick: () -> Unit = {}) {
                     )
                 }
             }
-
-            // 3. Store Name Field di bawah tombol Add
-            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = "Store Name *",
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                )
-                OutlinedTextField(
-                    value = storeName,
-                    onValueChange = { storeName = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Enter store name", color = Color.Gray) },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Black,
-                        cursorColor = Color.Black,
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black
-                    ),
-                    singleLine = true
-                )
-            }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun FormAddShoppingScreenPreview() {
-    MarketAlertTheme {
-        FormAddShoppingScreen()
     }
 }
