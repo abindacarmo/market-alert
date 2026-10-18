@@ -37,6 +37,7 @@ fun NavGraph(
         // 2. Rute Daftar Toko
         composable(route = Screen.MarketList.route) {
             MarketListScreen(
+                viewModel = viewModel,
                 onBackClick = { navController.popBackStack() },
                 onAddStoreClick = { navController.navigate(Screen.MarketForm.route) },
                 onStoreClick = { storeName ->

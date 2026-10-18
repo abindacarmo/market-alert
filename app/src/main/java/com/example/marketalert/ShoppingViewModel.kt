@@ -40,6 +40,8 @@ class ShoppingViewModel(
 
     fun itemByStore(storeId: Int) = itemDao.getByStore(storeId)
 
+    fun countRemaining(storeId: Int) = itemDao.countRemaining(storeId)
+
     fun addItem(name: String, storeId: Int) {
         if (name.isBlank()) return
         viewModelScope.launch {
