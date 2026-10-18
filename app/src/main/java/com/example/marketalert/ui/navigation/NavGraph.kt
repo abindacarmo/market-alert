@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.marketalert.ShoppingViewModel
 import com.example.marketalert.ui.templates.DashboardScreen
 import com.example.marketalert.ui.templates.DetailItemScreen
 import com.example.marketalert.ui.templates.FormAddShoppingScreen
@@ -13,7 +14,10 @@ import com.example.marketalert.ui.templates.MarketFormScreen
 import com.example.marketalert.ui.templates.MarketListScreen
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(
+    navController: NavHostController,
+    viewModel: ShoppingViewModel
+) {
     NavHost(
         navController = navController,
         startDestination = Screen.Dashboard.route

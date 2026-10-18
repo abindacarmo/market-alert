@@ -1,37 +1,69 @@
 package com.example.marketalert
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.example.marketalert.data.ShoppingItemDao
+import com.example.marketalert.data.Store
+import com.example.marketalert.data.StoreDao
+import kotlinx.coroutines.flow.SharingStarted
+import com.example.marketalert.data.ShoppingItem
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class ShoppingViewModel : ViewModel() {
-    private val _items = MutableStateFlow<List<ShoppingItem>>(
-        listOf(
-            ShoppingItem("1", "Warung Makmur", false),
-            ShoppingItem("2", "Toko Berkah Mart", false),
-            ShoppingItem("3", "Toko Sinar Jaya", false)
-        )
-    )
-    val items: StateFlow<List<ShoppingItem>> = _items
+class ShoppingViewModel(
+    private val storeDao: StoreDao,
+    private val itemDao: ShoppingItemDao
+): ViewModel() {
+    val stores: StateFlow<List<Store>> = storeDao.getAll().stateIn(viewModelScope, SharingStarted.WhileSubscribed(500),emptyList())
 
-    fun addItem(title: String) {
-        if (title.isBlank()) return
-        val newItem = ShoppingItem(
-            id = System.currentTimeMillis().toString(),
-            title = title,
-            isBought = false,
-            timestamp = System.currentTimeMillis()
-        )
-        _items.value = _items.value + newItem
+    init {
+        viewModelScope.launch {
+            if (storeDao.count() == 0) {
+                storeDao.insert(Store(name = "Warung Makmur", latitude = 0.0, longitude = 0.0, radius = 0f))
+                storeDao.insert(Store(name = "Toko Sinar Jaya", latitude = 0.0, longitude = 0.0, radius = 0f))
+                storeDao.insert(Store(name = "Indomaret Sejahtera", latitude = 0.0, longitude = 0.0, radius = 0f))
+            }
+        }
+
     }
 
-    fun toggleBought(item: ShoppingItem) {
-        _items.value = _items.value.map {
-            if (it.id == item.id) it.copy(isBought = !it.isBought) else it
+    fun addStore(name: String, latitude: Double, longitude: Double, radius: Float) {
+        if (name.isBlank()) return
+        viewModelScope.launch {
+            storeDao.insert(Store(name = name, latitude = latitude, longitude = longitude, radius = radius))
         }
     }
 
-    fun deleteItem(item: ShoppingItem) {
-        _items.value = _items.value.filter { it.id != item.id }
+    fun deleteStore(store: Store) = viewModelScope.launch { storeDao.delete(store) }
+
+    fun itemByStore(storeId: Int) = itemDao.getByStore(storeId)
+
+    fun addItem(name: String, storeId: Int) {
+        if (name.isBlank()) return
+        viewModelScope.launch {
+            itemDao.insert(
+                ShoppingItem(
+                    name = name,
+                    storeId = storeId
+                )
+            )
+        }
     }
+
+    fun toggleBought(item: ShoppingItem) = viewModelScope.launch { itemDao.toggleBought(item.id) }
+
+    fun deleteItem(item: ShoppingItem) = viewModelScope.launch { itemDao.delete(item) }
+
+    companion object {
+        fun factory(storeDao: StoreDao, itemDao: ShoppingItemDao) = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return ShoppingViewModel(storeDao, itemDao) as T
+            }
+        }
+    }
+
 }
+
